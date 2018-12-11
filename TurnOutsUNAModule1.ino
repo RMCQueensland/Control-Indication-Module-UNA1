@@ -62,12 +62,12 @@
    *   T201C Servo output = D13
    *   
    *   INPUTS
-   *   Main Loop MN1    pushButton input = D2
-   *   Passing Loop PN1 pushButtom input = D3
-   *   Main Loop MN2    pushButton input = D4
-   *   Passing Loop PN2 pushButton input = D5
-   *   Passing Loop PN3 pushButton input = D6
-   *   Passing Loop PN4 pushButton input = D7
+   *   Main Loop MN1    pushButton input = 6
+   *   Passing Loop PN1 pushButtom input = 7
+   *   Main Loop MN2    pushButton input = 5
+   *   Passing Loop PN2 pushButton input = 4
+   *   Passing Loop PN3 pushButton input = 3
+   *   Passing Loop PN4 pushButton input = 2
    */
    /*THEORY OF OPERATION (Logic Indication) MCP23017
     * The program to control the LOGIC INDICATION  of the track routes (LED's)with
