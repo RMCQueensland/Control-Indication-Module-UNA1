@@ -100,25 +100,25 @@
     * 
     * CONFIGURATION:-
     * Arduino PROMINI (APM) AnalogPin 5 (i2c Clock) to Expander pin#12
-    * Arduino (APM) Analog Pin4 (i2c Data) to Expnder Pin#13
-    * Expander Pin#15,#16,#17 to GROUND
-    * Expander Pin #9 to 5V Power
-    * Expander #10 to Ground Common
-    * Expander pin #18 through a 10kohm resistor to 5V(Reset pin, active LOW)
-    * 
-    * OUTPUTS (Active LOW,Port B (GPIO B)
-    * Connect  Pin#1(OP8)of the Expander to Passing Loop (PN1) LED (Port B Bit 0)
-    * Connect  Pin#2(OP9)of the Expander to Main (MN1) LED (Port B Bit 1)
-    * Connect  Pin#3(OP10)of the Expander to Main(MN2) LED (Port B Bit 2)
-    * Connect  Pin#4(OP11)of the Expander to Passing Loop(PN2) LED (Port B Bit 3)
-    * Connect  Pin#5(OP12)of the Expander to Passing Loop (PN3) LED (Port B Bit 4)
-    * Connect  Pin#6(OP13)of the Expander to Passing Loop (PN4) LED (Port B Bit 5)
+    * Arduino (APM) Analog Pin4 (i2c Data) to Expn (GPIO B)
+    * Expander Pin#15,#16,#17  to GROUND
+    *Expander Pin #9 to 5V
+    *Expander #10 to Ground Common
+    *Expander #18 through 10Kohm resistor to 5V(Reset pin ,active LOW)
+    
+    * OUTPUTS (Active LOW,Port A (GPIO A)
+    * Connect  Pin#21(OP0)of the Expander to Passing Loop (PN1) LED (Port A Bit 0)
+    * Connect  Pin#22(OP1)of the Expander to Main (MN1) LED (Port A Bit 1)
+    * Connect  Pin#23(OP2)of the Expander to Main(MN2) LED (Port A Bit 2)
+    * Connect  Pin#24(OP3)of the Expander to Passing Loop(PN2) LED (Port A Bit 3)
+    * Connect  Pin#25(OP4)of the Expander to Passing Loop (PN3) LED (Port A Bit 4)
+    * Connect  Pin#26(OP5)of the Expander to Passing Loop (PN4) LED (Port A Bit 5)
     *
-    * INPUTS (Active LOW,Port A (GPIO A ) 
-    * Connect pin#21(OP 0)Of the Expander  to  Turnout 200 Microswitch (Port A Bit 0) 
-    * Connect pin#22(OP 1)Of the Expander  to  Turnout 201A Microswitch (Port A Bit 1)
-    * Connect pin#23(OP 2)Of the Expander  to  Turnout 201B Microswitch (Port A Bit 2)
-    * Connect pin#24(OP 3)Of the Expander  to  Turnout201C Microswitch (Port A Bit 3)
+    * INPUTS (Active LOW,Port B (GPIO B ) 
+    * Connect pin#1(OP 8)Of the Expander  to  Turnout 200 Microswitch (Port B Bit 0) 
+    * Connect pin#2(OP 9)Of the Expander  to  Turnout 201A Microswitch (Port B Bit 1)
+    * Connect pin#3(OP10)Of the Expander  to  Turnout 201B Microswitch (Port B Bit 2)
+    * Connect pin#4(OP11)Of the Expander  to  Turnout201C Microswitch (Port B Bit 3)
     */
 
     //  SCOPE :-
@@ -310,21 +310,21 @@
 
         // LOGIC iNDICATION
         /*
-         * Define the micro Switch INPUT (PORT A GPA?) pins at the Expander MCP23017
+         * Define the micro Switch INPUT (PORT B GPIO B Pins (8-16)) pins at the Expander MCP23017
          */ 
-         #define t200Pin 0
-         #define t201APin 1
-         #define t201BPin 2
-         #define t201CPin 3
+         #define t200Pin 8
+         #define t201APin 9
+         #define t201BPin 10
+         #define t201CPin 11
 
-         //define the LED OUTPUT (PORT B GPB?) pins to the Expander MCP23017
+         //define the LED OUTPUT (PORT A GPIO A Pins (0-8)), pins to the Expander MCP23017
 
-         #define mainMN1LEDPin 9
-         #define passingPN1LEDPin 8
-         #define mainMN2LEDPin 10
-         #define passingPN2LEDPin 11
-         #define passingPN3LEDPin 12
-         #define passingPN4LEDPin 13
+         #define mainMN1LEDPin    1
+         #define passingPN1LEDPin 0
+         #define mainMN2LEDPin    2
+         #define passingPN2LEDPin 3
+         #define passingPN3LEDPin 4
+         #define passingPN4LEDPin 5
 
          //Constructor- Create an instance of the MCP23017 Libruary
          
@@ -393,17 +393,17 @@
        //Use default address 0
        mcp.begin();
 
-       //Set Port A as INPUTS and 100k internal PULLUP
+       //Set Port B as INPUTS and 100k internal PULLUP
 
-       for(uint8_t pin = 0; pin<8; pin++)
+       for(uint8_t pin = 8; pin<16; pin++)
        {
         mcp.pinMode(pin, INPUT);
         mcp.pullUp (pin, HIGH);
        } 
 
-       // Set Port B as OUTPUTS and turn all the LED's on LOW
+       // Set Port A as OUTPUTS and turn all the LED's on LOW
 
-       for(uint8_t pin= 8; pin <16 ; pin++) 
+       for(uint8_t pin= 0; pin <8 ; pin++) 
        {  
         mcp.pinMode(pin, OUTPUT);
         mcp.digitalWrite (pin, LOW);
@@ -669,52 +669,3 @@
             mcp.digitalWrite(passingPN4LEDPin, LOW);
           } //End mcp class 
           } //End Main
-         
-         
-         
-
-
-
-       
-
-        
-
-
-
-
-
-         
-         
-        
-       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          
-        
-       
-       
-    
-  
-      
-     
-    
-    
-  
-
-    
