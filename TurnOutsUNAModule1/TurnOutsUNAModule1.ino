@@ -1,4 +1,4 @@
- /* UNA 1 MCP23017
+  /* UNA 1 MCP23017
  *  Created by Glenn Black 08/11/2018
  *  Program debounce created  21 November , by David.A.Mellis
  *  Modified 30 August 2011 by Limor Fried
@@ -7,7 +7,7 @@
  *  LogicIndicationA1_1 created by David Lowe 30971 on 01/09/18
   */
   /*Arduino   IDE Set up
-   * Board Arduino Pro mini
+   * Board Arduino Pro mini 
    * Processor ATMega328P
    */
   /* THEORY OF OPERATION   2 Components  A/Logic Coontrol
@@ -159,6 +159,8 @@
 
     //Passing Loop(PN4)
     const int inputPassingLoopPN4 = 2;
+
+   
     
 
     //Constructor
@@ -227,11 +229,11 @@
 
       //Time variable ( primitive Long due to millisecs time measurement)
 
-      long lastDebounceTime = 0 ;
+      unsigned long lastDebounceTime = 0 ;
 
       //Debounce Time (increase if output flickers)
 
-      long debounceDelay = 30 ;
+      unsigned long debounceDelay = 30 ;
       
 
       //RMCQControl Libruary Functions
@@ -240,77 +242,9 @@
       * void RMCQControl :: changeReverse(boolean currentState, Servo  servoname, int outputPin) 
       */
 
-      // Set  Functions
-      
-      /* N =Normal (C)
-       *  R = Reverse (T = Thrown)
-       */
-
-      void setMainLoopMN1 ()
-      // On Main Loop MN1 : 200 N ,
-      // Turnout 200 to Normal
-      {rmcqControl.changeNormal(currentServoState200,servo200,opPin200);
-      //  change to Normal
-      currentServoState200 = HIGH;
-      }
-
-      void setPassingLoopPN1()
-      /*On Passing LoopPN1 : 200 R,
-       * Turnout 200 to Thrown
-       */
-       {rmcqControl.changeReverse (currentServoState200,servo200,opPin200);
-       //change to Thrown
-       currentServoState200 = LOW;
-       }
-
-       void setMainLoopMN2 ()
-       /* On Main LoopMN2: 201A : R ,
-        *  Turnout 201A to Thrown
-        */
-        {rmcqControl.changeReverse(currentServoState201A,servo201A,opPin201A);
-        //change to Thrown
-        currentServoState201A =LOW;
-        }
-
-        void setPassingLoopPN2 ()
-        // On Passing LoopPN2 :201A N,: 201B R
-        //Turnout 201A to Normal
-        {rmcqControl.changeNormal(currentServoState201A,servo201A,opPin201A);
-        currentServoState201A = HIGH;
-        //Turnout 201B to Thrown
-        rmcqControl.changeReverse(currentServoState201B,servo201B,opPin201B);
-        currentServoState201B = LOW ;
-        }
-
-        void setPassingLoopPN3()
-        //On Passing LoopPN3 :201A N: 201B N:201C R
-        //Turnout 201A to Normal
-        {rmcqControl.changeNormal(currentServoState201A,servo201A,opPin201A);
-        currentServoState201A= HIGH;
-        //Turnout 201B  to Normal
-        rmcqControl.changeNormal(currentServoState201B,servo201B,opPin201B);
-        currentServoState201B =HIGH;
-        //Turnout 201C to Thrown
-        rmcqControl.changeReverse(currentServoState201C,servo201C,opPin201C);
-        currentServoState201C =LOW;
-        }
-
-        void setPassingLoopPN4()
-        //On Passing LoopPN4 :201A N, 201B N, 201C N
-        //Turnout201A to Normal
-        {rmcqControl.changeNormal(currentServoState201A,servo201A,opPin201A);
-        currentServoState201A =HIGH;
-        //Turnout201B to Normal
-        rmcqControl.changeNormal(currentServoState201B,servo201B,opPin201B);
-        currentServoState201B = HIGH ;
-        //Turnout201C to Normal
-        rmcqControl.changeNormal(currentServoState201C,servo201C,opPin201C);
-        currentServoState201C = HIGH;
-        }
-
-        // LOGIC iNDICATION
+       // LOGIC iNDICATION
         /*
-         * Define the micro Switch INPUT (PORT B GPIO B Pins (8-16)) pins at the Expander MCP23017
+         * Define the micro Switch INPUT (PORT B GPIO B Pins (8-16)) pins to the Expander MCP23017
          */ 
          #define t200Pin 8
          #define t201APin 9
@@ -328,11 +262,14 @@
 
          //Constructor- Create an instance of the MCP23017 Libruary
          
-         Adafruit_MCP23017 mcp; 
+         Adafruit_MCP23017 mcp;
+
+         void RMCQIndicationUNA1 ();
          
          
       void setup()
       {
+      
        Serial.begin (9600);
        Serial.println("RMCQ Standard Identification Information");
        Serial.print ("Running");
@@ -356,10 +293,10 @@
        pinMode(inputPassingLoopPN2,INPUT_PULLUP);
        pinMode(inputPassingLoopPN3,INPUT_PULLUP);
        pinMode(inputPassingLoopPN4,INPUT_PULLUP);
-
+ 
        // Set the INITIAL State of the Servo's
 
-       //Set Turnout 200
+       //Set Turnout 200 
 
        rmcqControl.center(servo200,startPos,opPin200);
        rmcqControl.changeNormal(LOW,servo200,opPin200);
@@ -371,7 +308,7 @@
        rmcqControl.center(servo201A,startPos,opPin201A);
        rmcqControl.changeNormal(LOW,servo201A,opPin201A);
        //Set Normal State
-       currentServoState201A =HIGH;
+       currentServoState201A = HIGH;
 
        //Set Turnout 201B
 
@@ -395,7 +332,7 @@
 
        //Set Port B as INPUTS and 100k internal PULLUP
 
-       for(uint8_t pin = 8; pin<16; pin++)
+       for(uint8_t pin = 8; pin<15; pin++)
        {
         mcp.pinMode(pin, INPUT);
         mcp.pullUp (pin, HIGH);
@@ -403,16 +340,16 @@
 
        // Set Port A as OUTPUTS and turn all the LED's on LOW
 
-       for(uint8_t pin= 0; pin <8 ; pin++) 
+       for(uint8_t pin= 0; pin <7 ; pin++) 
        {  
         mcp.pinMode(pin, OUTPUT);
-        mcp.digitalWrite (pin, LOW);
+        mcp.digitalWrite (pin, HIGH); 
        }
         //Turn the LEDs off
         delay (200);
-        for(uint8_t  pin = 8 ;pin <16 ; pin++)
+        for(uint8_t  pin = 0 ;pin <15 ; pin++)
        {
-        mcp.digitalWrite (pin, HIGH);
+        mcp.digitalWrite (pin, LOW );
           
        }
         }
@@ -435,7 +372,9 @@
     
     // Read inputMainLoopMN1 Pin 6 
     // On MainLoopMN1 : 200 N
-     {
+    { 
+      RMCQIndicationUNA ();
+      
       int inputMainLoopMN1State =digitalRead(inputMainLoopMN1);
 
      
@@ -457,7 +396,7 @@
        if (inputMainLoopMN1State != inputStateMainLoopMN1)
        {
         inputStateMainLoopMN1 = inputMainLoopMN1State;
-        if (inputMainLoopMN1State =LOW)
+        if (inputMainLoopMN1State == LOW)
         {
           setMainLoopMN1 ();
                }
@@ -475,9 +414,9 @@
         {
          //reset the Debounce Time
          lastDebounceTime =millis();
-        }
+        
         Serial.println(" Passing LoopPN1 Activated");
-
+        }
         if((millis() -lastDebounceTime) > debounceDelay)
         {
           /*Checks to see if the Command Position is the Current Position
@@ -499,7 +438,7 @@
 
           // Read inputMainLoopMN2 Pin 5
     // On Main Loop MN2 : 201A R (T)
-     {
+     
       int inputMainLoopMN2State =digitalRead(inputMainLoopMN2);
 
       //current read of MainLoopMN2State (NOT EQUAL TO) last assigned read of the MainLoopMN2
@@ -516,7 +455,7 @@
        if (inputMainLoopMN2State != inputStateMainLoopMN2)
        {
         inputStateMainLoopMN2 = inputMainLoopMN2State;
-        if (inputMainLoopMN2State =LOW)
+        if (inputMainLoopMN2State  ==  LOW)
         {
           setMainLoopMN2 ();
                }
@@ -524,7 +463,7 @@
           }
         lastInputStateMainLoopMN2 =inputMainLoopMN2State;
 
-     }
+      
 
        // Read PassingLoopPN2 Pin 4
         //On PassingLoopPN2 : 201A N, 201B R (T) ,
@@ -535,8 +474,9 @@
         {
          //reset the Debounce Time
          lastDebounceTime =millis();
-        }
+        
         Serial.println(" Passing LoopPN2 Activated");
+        }
 
         if((millis() -lastDebounceTime) > debounceDelay)
         {
@@ -566,8 +506,9 @@
         {
          //reset the Debounce Time
          lastDebounceTime =millis();
-        }
+        
         Serial.println(" Passing LoopPN3 Activated");
+        }
 
         if((millis() -lastDebounceTime) > debounceDelay)
         {
@@ -598,8 +539,9 @@
         {
          //reset the Debounce Time
          lastDebounceTime =millis();
-        }
+        
         Serial.println(" Passing LoopPN4 Activated");
+        }
 
         if((millis() -lastDebounceTime) > debounceDelay)
         {
@@ -618,54 +560,96 @@
             }
           }
          lastInputStatePassingLoopPN4 = inputPassingLoopPN4State; 
+    
+  
+    }
+
          
+     
+
+         // Set  Functions
+      
+      /* N =Normal (C)
+       *  R = Reverse (T = Thrown)
+       */
+
+      void setMainLoopMN1 ()
+      {
+      // On Main Loop MN1 : 200 N ,
+      // Turnout 200 to Normal
+      rmcqControl.changeNormal(currentServoState200,servo200,opPin200);
+      //change to Normal
+      currentServoState = HIGH;
+      }
+
+      void setPassingLoopPN1()
+      /*On Passing LoopPN1 : 200 R,
+       * Turnout 200 to Thrown
+       */
+       {
+       rmcqControl.changeReverse (currentServoState200,servo200,opPin200);
+       //change to Thrown
+       currentServoState200 = LOW;
+       }
+
+       void setMainLoopMN2 ()
+       /* On Main LoopMN2: 201A : R ,
+        *  Turnout 201A to Thrown
+        */
+        {
+        rmcqControl.changeReverse(currentServoState201A,servo201A,opPin201A);
+        //change to Thrown
+        currentServoState201A =LOW;
+        }
+
+        void setPassingLoopPN2 ()
+        // On Passing LoopPN2 :201A N,: 201B R
+        //Turnout 201A to Normal
+        {
+        rmcqControl.changeNormal(currentServoState201A,servo201A,opPin201A);
+        currentServoState201A = HIGH;
+        //Turnout 201B to Thrown
+        rmcqControl.changeReverse(currentServoState201B,servo201B,opPin201B);
+        currentServoState201B = LOW ;
+        }
+
+        void setPassingLoopPN3()
+        //On Passing LoopPN3 :201A N: 201B N:201C R
+        //Turnout 201A to Normal
+        {
+        rmcqControl.changeNormal(currentServoState201A,servo201A,opPin201A);
+        currentServoState201A = HIGH;
+        //Turnout 201B  to Normal
+        rmcqControl.changeNormal(currentServoState201B,servo201B,opPin201B);
+        currentServoState201B = HIGH;
+        //Turnout 201C to Thrown
+        rmcqControl.changeReverse(currentServoState201C,servo201C,opPin201C);
+        currentServoState201C = LOW;
+        }
+
+        void setPassingLoopPN4()
+        //On Passing LoopPN4 :201A N, 201B N, 201C N
+        //Turnout201A to Normal
+        {
+       rmcqControl.changeNormal(currentServoState201A,servo201A,opPin201A);
+        currentServoState201A = HIGH;
+        //Turnout201B to Normal
+        rmcqControl.changeNormal(currentServoState201B,servo201B,opPin201B);
+        currentServoState201B = HIGH ;
+        //Turnout201C to Normal
+        rmcqControl.changeNormal(currentServoState201C,servo201C,opPin201C);
+        currentServoState201C = HIGH;
+        }
+
+    
+    
+ 
+ 
+
+  
+ 
+ 
+ 
+
+        
          
-
-
-         //LOGIC INDICATION LOOP CODE
-
-         //Check for the condition and set the output accordingly
-
-         //For mainMN1
-         
-         if(mcp.digitalRead(t200Pin))
-         {
-          mcp.digitalWrite(mainMN1LEDPin, LOW);
-          
-         }
-
-         //For passingLoopPN1
-
-         if(!mcp.digitalRead(t200Pin))
-         {
-          mcp.digitalWrite(passingPN1LEDPin, LOW);
-          
-         }
-
-         //For mainMN2
-
-         if(!mcp.digitalRead(t201APin))
-         {
-          mcp.digitalWrite(mainMN2LEDPin, LOW);
-         }
-
-         //For PassingLoopPN2
-
-         if(mcp.digitalRead(t201APin) && !mcp.digitalRead(t201BPin));
-         {
-          mcp.digitalWrite(passingPN2LEDPin, LOW);
-         }
-
-         //ForPassingLoopPN3
-
-         if(mcp.digitalRead(t201APin) && mcp.digitalRead(t201BPin) &&!mcp.digitalRead(t201CPin))
-         {
-          mcp.digitalWrite(passingPN3LEDPin ,LOW);
-         }
-
-         //For PassingLoopPN4
-           if (mcp.digitalRead(t201APin) && mcp.digitalRead(t201BPin) && mcp.digitalRead(t201CPin))
-          {
-            mcp.digitalWrite(passingPN4LEDPin, LOW);
-          } //End mcp class 
-          } //End Main
